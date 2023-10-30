@@ -37,6 +37,7 @@ h1 {
 }
 
 button {
+  margin: 4px;
   border-radius: 8px;
   border: 1px solid transparent;
   padding: 0.6em 1.2em;
@@ -78,3 +79,11 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+
+
+
+.success {background-color: #4CAF50;} /* Green */
+.info {background-color: #008CBA;} /* Blue */
+.waring {background-color: #f44336;} /* Red */
+.gary {background-color: #e7e7e7; color: black;} /* Gray */

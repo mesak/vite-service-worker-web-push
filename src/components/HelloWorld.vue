@@ -1,11 +1,3 @@
-<script setup lang="ts">
-import { ref } from 'vue'
-
-defineProps<{ msg: string }>()
-
-const count = ref(0)
-</script>
-
 <template>
   <h1>{{ msg }}</h1>
 
@@ -29,8 +21,87 @@ const count = ref(0)
     in your IDE for a better DX
   </p>
   <p class="read-the-docs">Click on the Vite and Vue logos to learn more</p>
-</template>
 
+  <div class="card">
+    <button type="button" class="waring" @click="useEmit('off-send')">
+      off send
+    </button>
+    <button type="button" class="success" @click="useEmit('send')">
+      trigger send
+    </button>
+    <button type="button" class="success" @click="useEmit('send', 2)">
+      trigger send 2
+    </button>
+    <button type="button" class="success" @click="useEmit('send-once')">
+      send once
+    </button>
+  </div>
+  <div class="card">
+    <button type="button" class="info" @click="useEmit('test-notification')">
+      trigger useWebNotification
+    </button>
+    <button
+      type="button"
+      class="info"
+      @click="useEmit('test-notification', 'test bbb')"
+    >
+      trigger useWebNotification bbb
+    </button>
+  </div>
+  <Child @emitHandler="useEmit" />
+</template>
+<script setup lang="ts">
+import { ref } from "vue";
+import { useWebNotification } from "@vueuse/core";
+import { useHandler, useWorker } from "../utils";
+const { eventHandler, useEmit } = useHandler();
+
+import Child from "./Child.vue";
+defineProps<{ msg: string }>();
+
+const { hasServiceWorker, workerEmit } = useWorker();
+const count = ref(0);
+
+eventHandler.on("off-send", () => {
+  eventHandler.off("send");
+});
+
+eventHandler.on("send", (e: any) => {
+  console.log(e);
+
+  console.log("detail", e.detail);
+  console.log("send");
+  console.log("hasServiceWorker.value", hasServiceWorker.value);
+
+  if (hasServiceWorker.value) {
+    workerEmit("notification", {
+      title: "test1",
+      body: "test2",
+    });
+  }
+});
+
+eventHandler.once("send-once", () => {
+  console.log("send once");
+  alert("send");
+});
+
+eventHandler.on("test-notification", (e: any) => {
+  console.log(e);
+  const [content] = e.detail;
+  const title = content ?? "Hello, world from VueUse!";
+  const { isSupported, show } = useWebNotification({
+    title,
+    dir: "auto",
+    lang: "en",
+    renotify: true,
+    tag: "test",
+  });
+  if (isSupported.value) {
+    show();
+  }
+});
+</script>
 <style scoped>
 .read-the-docs {
   color: #888;

@@ -3,6 +3,7 @@ import ts from 'typescript';
 import { resolve } from 'path';
 import { readFileSync, writeFileSync } from 'fs';
 import { ViteDevServer } from 'vite';
+import process from 'process';
 export interface VitePluginServiceWorkerOptions {
   sourceFile?: string;
   filename?: string;
